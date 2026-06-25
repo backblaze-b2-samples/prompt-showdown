@@ -1,7 +1,23 @@
-<!-- last_verified: 2026-03-06 -->
+<!-- last_verified: 2026-06-25 -->
 # Reliability
 
 Reliability expectations and practices for this project.
+
+## Long-Running, Blocking Endpoints
+
+Some handlers wrap fully synchronous, long-blocking work (e.g. `POST /runs`
+runs many minutes of blocking NVIDIA NIM HTTP calls via Genblaze plus blocking
+boto3 B2 writes inside `service.showdown.create_run`).
+
+- Such handlers MUST be declared as plain `def`, not `async def`. FastAPI runs
+  non-coroutine path operations in its threadpool, so the long blocking call
+  never occupies the asyncio event loop.
+- Declaring one of these as `async def` blocks the event loop for the entire
+  run on a single-worker uvicorn: every other request returns HTTP 000, the
+  server cannot process the client's disconnect/cancellation, and the worker
+  has to be SIGKILL'd. The run is lost (never persisted to B2, never returned).
+- Short, infrequent blocking calls (the file/upload/list endpoints) tolerate
+  `async def` in practice, but the long generation run does not.
 
 ## Health Checks
 

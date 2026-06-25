@@ -16,6 +16,11 @@ class Settings(BaseSettings):
     nvidia_api_key: str = ""
     showdown_gen_model: str = "meta/llama-3.3-70b-instruct"
     showdown_judge_model: str = "meta/llama-3.3-70b-instruct"
+    # Per-request HTTP timeout (seconds) for generation + judge calls. The
+    # genblaze NVIDIA surfaces default to 60s, which is too short for the
+    # default 70B model on NIM's free tier (verbose prompts / structured judge
+    # output regularly take 115-180s), causing dropped cells and null judges.
+    showdown_request_timeout: float = 300.0
 
     api_port: int = 8000
     # Explicit allowlist by default — covers Next on :3000 and the

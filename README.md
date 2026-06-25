@@ -44,6 +44,12 @@ and a free **NVIDIA NIM API key** (get one at [build.nvidia.com](https://build.n
 > **Cost:** NVIDIA NIM's free tier has **no per-token billing** (it is
 > rate-limited to ~40 req/min). A default demo run (3 variants × 3 inputs = 18
 > calls) costs **≈ $0.00**.
+>
+> **Run time:** on the free tier the default 70B model can take 2–3 minutes per
+> call for verbose prompts/outputs, so a full default run may take several
+> minutes. Each call has a generous HTTP timeout (`SHOWDOWN_REQUEST_TIMEOUT`,
+> default 300s) so cells don't drop and judge scores don't come back null. Pick
+> a smaller model (e.g. `meta/llama-3.1-8b-instruct`) for faster runs.
 
 **1. Install dependencies**
 
@@ -105,6 +111,7 @@ gotchas and tells you how to fix each one. Run it standalone with `pnpm doctor`.
 | `NVIDIA_API_KEY` | NVIDIA NIM key for LLM generation + judging |
 | `SHOWDOWN_GEN_MODEL` | Optional override (default `meta/llama-3.3-70b-instruct`) |
 | `SHOWDOWN_JUDGE_MODEL` | Optional override (default `meta/llama-3.3-70b-instruct`) |
+| `SHOWDOWN_REQUEST_TIMEOUT` | Optional per-request HTTP timeout in seconds for generation + judge calls (default `300`). The 70B default model on NIM's free tier can take 2–3 min per call for verbose prompts; raising this prevents dropped cells / null judge scores. |
 
 ## Core Features
 

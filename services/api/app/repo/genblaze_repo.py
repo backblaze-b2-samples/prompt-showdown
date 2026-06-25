@@ -88,7 +88,10 @@ def run_variant(
     pipeline = Pipeline(
         f"showdown-{run_id}-{variant_name}", max_concurrency=_MAX_CONCURRENCY
     ).step(
-        NvidiaChatProvider(api_key=settings.nvidia_api_key or None),
+        NvidiaChatProvider(
+            api_key=settings.nvidia_api_key or None,
+            timeout=settings.showdown_request_timeout,
+        ),
         model=model,
         prompt=template,
         modality=Modality.TEXT,
@@ -110,6 +113,7 @@ def judge_cell(output_text: str, criteria: str, model: str) -> JudgeVerdict:
         response_format=JudgeVerdict,
         temperature=0,
         api_key=settings.nvidia_api_key or None,
+        timeout=settings.showdown_request_timeout,
     )
     data = json.loads(resp.text)
     return JudgeVerdict.model_validate(data)

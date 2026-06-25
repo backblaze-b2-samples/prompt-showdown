@@ -50,10 +50,14 @@ class _FakePipeline:
 def test_run_variant_signature(monkeypatch):
     _FakePipeline.calls = {}
 
+    provider_kwargs: dict = {}
+
+    def _fake_provider(**kw):
+        provider_kwargs.update(kw)
+        return type("NvidiaChatProvider", (), {})()
+
     monkeypatch.setattr(genblaze_repo, "Pipeline", _FakePipeline)
-    monkeypatch.setattr(
-        genblaze_repo, "NvidiaChatProvider", lambda **kw: type("NvidiaChatProvider", (), {})()
-    )
+    monkeypatch.setattr(genblaze_repo, "NvidiaChatProvider", _fake_provider)
     # Sentinel sink so we don't construct a real S3 backend / hit B2.
     monkeypatch.setattr(genblaze_repo, "_sink", lambda run_id: f"sink:{run_id}")
 
@@ -73,6 +77,9 @@ def test_run_variant_signature(monkeypatch):
     assert calls["modality"] == genblaze_repo.Modality.TEXT
     assert calls["input_rows"] == rows
     assert calls["sink"] == "sink:run1"
+    # The provider must carry the configured per-request HTTP timeout (the 60s
+    # genblaze default is too short for the 70B model on NIM's free tier).
+    assert provider_kwargs["timeout"] == genblaze_repo.settings.showdown_request_timeout
 
 
 def test_judge_cell_signature(monkeypatch):
@@ -98,6 +105,11 @@ def test_judge_cell_signature(monkeypatch):
     assert captured["response_format"] is JudgeVerdict
     assert "be accurate" in captured["prompt"]
     assert captured["kwargs"].get("temperature") == 0
+    # The judge call must carry the configured per-request HTTP timeout.
+    assert (
+        captured["kwargs"].get("timeout")
+        == genblaze_repo.settings.showdown_request_timeout
+    )
 
 
 def test_genblaze_imports_contained_in_repo():

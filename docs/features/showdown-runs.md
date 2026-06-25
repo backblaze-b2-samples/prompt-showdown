@@ -1,4 +1,4 @@
-<!-- last_verified: 2026-06-24 -->
+<!-- last_verified: 2026-06-25 -->
 # Feature: Showdown Runs
 
 ## Purpose
@@ -40,6 +40,10 @@ to Backblaze B2, and expose the run for browsing and export.
 ## Edge Cases
 - A provider failure for a cell → that cell's output is empty; the run still
   completes and persists (`raise_on_failure=False`)
+- Slow generation → each call uses `SHOWDOWN_REQUEST_TIMEOUT` (default 300s) as
+  its HTTP timeout. The genblaze default is 60s, which is too short for the 70B
+  default model on NIM's free tier and drops cells; the larger timeout prevents
+  this.
 - Missing `NVIDIA_API_KEY` → the provider raises; surfaced as `502` from `POST /runs`
 - Generation default is small (3×3) to stay under the NIM free-tier rate limit
 

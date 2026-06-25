@@ -1,4 +1,4 @@
-<!-- last_verified: 2026-06-24 -->
+<!-- last_verified: 2026-06-25 -->
 # Feature: LLM Judge
 
 ## Purpose
@@ -34,6 +34,11 @@ producing `{score, rationale}` per cell so variants can be compared objectively.
 ## Edge Cases
 - Judge call fails for a cell → logged as a warning; that cell keeps a null score
   and the run completes (judging is best-effort per cell)
+- Slow judging → the `chat()` call uses `SHOWDOWN_REQUEST_TIMEOUT` (default 300s)
+  as its HTTP timeout. The genblaze default is 60s, too short for the 70B default
+  judge model on NIM's free tier (structured-output judging regularly takes
+  115–180s), which is what caused most cells to come back with a null score; the
+  larger timeout prevents this.
 - `judge_enabled=false` → generation only; the human-rating control still applies
 - Malformed structured output → JSON parse / Pydantic validation error, caught
   per cell

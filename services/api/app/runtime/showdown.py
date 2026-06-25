@@ -27,8 +27,15 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+# NOTE: deliberately a plain `def`, not `async def`. create_run() is a long,
+# fully synchronous, blocking operation (many minutes of blocking NIM HTTP
+# calls + blocking boto3 B2 writes). Declared `async def` it would run on the
+# event loop and freeze the entire single-worker server for the whole run
+# (HTTP 000 on every other request, unable to process client disconnects).
+# As a plain `def`, FastAPI runs it in its threadpool, keeping the loop free.
+# See docs/RELIABILITY.md.
 @router.post("/runs", response_model=ShowdownRun)
-async def create_run_endpoint(req: CreateRunRequest):
+def create_run_endpoint(req: CreateRunRequest):
     try:
         return create_run(req)
     except RunInputError as e:
