@@ -8,6 +8,24 @@ preserved on **[Backblaze B2](https://www.backblaze.com/sign-up/ai-cloud-storage
 — full inputs, outputs, and scores — append-only, queryable, and exportable. B2
 is the durable, query-friendly system of record for your AI run history.
 
+## What it looks like
+
+**Dashboard** — showdown metrics (total runs, variants compared, average judge score, best variant), a wins-per-variant chart, and a recent-runs table.
+
+![Dashboard with showdown metrics, wins-per-variant chart, and recent runs](docs/images/dashboard.png)
+
+**Run History** — every showdown preserved under the `showdowns/` prefix on B2, listed with its variant/input counts, best variant, and average judge score.
+
+![Run History explorer scoped to the B2 showdowns prefix](docs/images/run-history.png)
+
+**New Showdown** — define named prompt variants and a shared input set, toggle the LLM judge, and run the whole grid.
+
+![New Showdown form with prompt variants and a shared input set](docs/images/new-showdown.png)
+
+**Run detail** — the leaderboard plus the full variant × input grid of generated outputs with per-cell judge scores.
+
+![Run detail grid and leaderboard for a single showdown](docs/images/run-detail.png)
+
 **What you get out of the box:**
 - Side-by-side prompt-variant comparison — define variants + a shared input set, run the whole grid
 - LLM judge — every output scored `{score, rationale}` with a structured-output call
