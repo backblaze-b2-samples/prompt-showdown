@@ -1,4 +1,4 @@
-<!-- last_verified: 2026-05-21 -->
+<!-- last_verified: 2026-08-17 -->
 # Dev Workflows
 
 Engineering workflows for this repo.
@@ -10,7 +10,7 @@ Engineering workflows for this repo.
 - [ ] For non-trivial changes, create a plan in `docs/exec-plans/active/`
 - [ ] Implement the smallest coherent change
 - [ ] Add or update tests
-- [ ] Run: `pnpm typecheck && pnpm lint && pnpm lint:api && pnpm test:api && pnpm check:structure`
+- [ ] Run: `pnpm --filter @prompt-showdown/web typecheck && pnpm lint && pnpm lint:api && pnpm test:api && pnpm check:structure`
 - [ ] Update docs in the same PR (see AGENTS.md §8)
 - [ ] Move plan to `docs/exec-plans/completed/` after validation
 
@@ -56,11 +56,16 @@ Engineering workflows for this repo.
 ### Commands
 - Quick (backend): `pnpm test:api`
 - Structure: `pnpm check:structure`
-- Frontend typecheck: `pnpm typecheck`
+- Frontend typecheck: `pnpm --filter @prompt-showdown/web typecheck`
 - Frontend lint: `pnpm lint`
 - Backend lint: `pnpm lint:api`
-- Full suite: `pnpm typecheck && pnpm lint && pnpm lint:api && pnpm test:api && pnpm check:structure`
+- Full suite: `pnpm --filter @prompt-showdown/web typecheck && pnpm lint && pnpm lint:api && pnpm test:api && pnpm check:structure`
 - E2E: `pnpm test:e2e` (run `pnpm --filter @prompt-showdown/web exec playwright install chromium` once first)
+
+### CI
+- GitHub Actions installs frontend dependencies with `pnpm install --frozen-lockfile`
+  from the workspace root. Do not use `npm install` in `apps/web`; workspace
+  dependencies use the `workspace:*` protocol.
 
 ### When to run
 - After behavior change: run relevant subset

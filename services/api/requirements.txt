@@ -11,9 +11,9 @@ PyPDF2>=3.0.0
 
 # Genblaze SDK — provider orchestration (AI calls) + B2 provenance sink.
 # All genblaze imports are contained in services/api/app/repo/.
-genblaze-core>=0.3.2,<0.4
+genblaze-core>=0.3.4,<0.4
 genblaze-s3>=0.3.2,<0.4
-genblaze-nvidia[chat]>=0.3.0,<0.4   # [chat] pulls the openai wire SDK for LLM calls
+genblaze-nvidia[chat]>=0.3.1,<0.3.2   # [chat] pulls the openai wire SDK for LLM calls
 
 # Dev / quality
 ruff>=0.8.0
